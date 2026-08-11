@@ -19,7 +19,7 @@ module.exports = defineConfig({
       height: 1080,
       
     },
-    url: 'https://qa1-ipc.deloitte.com/ipc/2025/v2/client-selection',
+    url: 'https://qa1-ipc.deloitte.com/ipc/2026/v2/client-selection',
     downloadsPath: 'C:/Downloads',
   },
   reporter: [['html', { outputFolder: 'test-results', open: 'never' }]],

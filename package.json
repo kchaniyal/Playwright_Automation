@@ -3,7 +3,16 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:report": "playwright show-report",
+    "test:client": "playwright test \"tests/Client Selection.spec.js\"",
+    "test:import": "playwright test \"tests/Import Testing.spec.js\"",
+    "test:basic": "playwright test \"tests/UIBasic.spec.js\"",
+    "test:example": "playwright test \"tests/example.spec.js\""
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

@@ -8,8 +8,11 @@ const password = 'WDekq62SNN1%XuBo(yRt';
 const clientName = 'QA Automation Global';
 const importName = 'Yearly';
 const entity = '0218_Entity_Lower';
+const Reportentity = '0218_Entity_Middle';
 const Import_Type = 'Import_Yearly';
 const downloadDirectory = require('../playwright.config').use.downloadsPath;
+const ReportName = 'Schedule K Equivalent';
+
 fs.mkdirSync(downloadDirectory, { recursive: true });
 
 test.skip('Login and select client', async ({page}) => {
@@ -48,7 +51,7 @@ test.skip('Login and select client', async ({page}) => {
     //Client Selection Ends
 });
 
-test('Yearly Import Download and Upload', async ({page}) => {
+test.skip('Yearly Import Download and Upload', async ({page}) => {
     
     // let singleEntityLevelImport = true;
     //CLear the download directory before starting the test
@@ -144,59 +147,22 @@ test('Yearly Import Download and Upload', async ({page}) => {
     await console.log(`ImportHistoryFileNameUpdated as: ${ImportHistoryFileNameUpdated}`);    
     await page.waitForTimeout(10000); // Wait for 2 seconds to ensure the selection is registered
 
-    
-    // const UploadCtrl = page.locator('input[type="file"]').first();
     const UploadCtrl = page.locator('xpath=//*[@id="dataloaduploadsection"]/div[1]/label').first();    
     await expect(UploadCtrl).toBeVisible({ timeout: 15000 });
     await UploadCtrl.setInputFiles(savedFilePath);
     await page.waitForTimeout(10000); 
 
-    //Import Histries Tab Click
-    // const ImportHistryTabBtn = 
     await page.getByText('Import History').click();//page.locator('button[role="tab"]:has-text("Import History")').first();
-    // await expect(ImportHistryTabBtn).toBeVisible({ timeout: 20000 });
-    // await ImportHistryTabBtn.click();
-    // await page.waitForTimeout(50000);
-    ////*[@id="dataloaduploadsection"]/div[1]/label
-    const importHistoryTable = page.locator('table').first();
+    
+    const importHistoryTable = page.locator('xpath=/html/body/app-root/div[1]/kendo-splitter/kendo-splitter-pane/div/div[2]/div/app-dashboard/div/div[1]/div[2]/div/div[2]/kendo-tabstrip/div[2]/div/app-import-history/div/div/app-upload-history/div/kendo-grid').first();
+    
+    await expect(importHistoryTable).toBeVisible();    
     await expect(page.locator('.k-loading-image')).toBeVisible();
     await expect(page.locator('.k-loading-image')).toBeHidden();
     await expect(importHistoryTable).toBeVisible();
-    const RefreshBtn = page.locator('xpath=/html/body/app-root/div[1]/kendo-splitter/kendo-splitter-pane/div/div[2]/div/app-dashboard/div/div[1]/div[2]/div/div[2]/kendo-tabstrip/div[2]/div/app-import-history/div/div/app-upload-history/div/button').first();
-    // const refreshBtn = page.locator(XPath='//*[@id="dataloaduploadsection"]/div[2]/div[1]/div[1]/div/div[2]/button').first();
-    // /html/body/app-root/div[1]/kendo-splitter/kendo-splitter-pane/div/div[2]/div/app-dashboard/div/div[1]/div[2]/div/div[2]/kendo-tabstrip/div[2]/div/app-import-history/div/div/app-upload-history/div/button
-    ////*[@id="k-tabstrip-tabpanel-9f34b594-f97f-49de-b908-57aff965ee90-1"]/div/app-import-history/div/div/app-upload-history/div/button
-    // const importHistoryRow = importHistoryTable.locator('tbody tr').filter({ hasText: ("Entity Name") });
-
-    // for (let i = 0; i < 10; i++) {
-        
-    //     await expect(RefreshBtn).toBeVisible();
-    //     await RefreshBtn.click();
-    //     await expect(page.locator('.k-loading-image')).toBeVisible();
-    //     await expect(page.locator('.k-loading-image')).toBeHidden();
-    //     await expect(importHistoryRow).toBeVisible();
-    //     // await page.waitForTimeout(20000);
-    //     if (await importHistoryRow.count() > 0) {
-    //         await expect(importHistoryRow).toBeVisible();
-    //         // await page.waitForTimeout(10000);
-    //         // await expect(page.locator('div').filter({ hasText: /^ImportHistoryFileNameUpdated$/ })).toBeVisible();
-    //         // await expect(page.getByText(/.*ImportHistoryFileNameUpdated*/)).toBeVisible();
-    //         await expect(page.getByRole('gridcell', { name: userID }).first()).toBeVisible();
-    //         await expect(page.getByRole('gridcell', { name: entity }).first()).toBeVisible();
-    //         await expect(page.getByRole('gridcell', { name: ImportHistoryFileNameUpdated }).first()).toBeVisible();
-    //         await expect(page.locator('.circle').first()).toBeVisible();
-    //         break;
-    //     }   
-    // }
+    const importHistoryRows = importHistoryTable.locator('tbody tr');
     
-    // for (let i = 0; i < 100; i++) {
-    //     await page.getByRole('gridcell').filter({ hasText: /^$/ }).nth(3).click();
-        
-    //     await expect(page.getByRole('gridcell', { name: 'Smoke2537DFEIE1_FedK1.csv', exact: true })).toBeVisible();
-    //     await expect(page.getByRole('gridcell', { name: 'kchaniyal', exact: true })).toBeVisible();
-    //     await expect(page.getByRole('gridcell', { name: '07/01/2026 6:30:42 AM', exact: true })).toBeVisible();
-    // }
-
+    const RefreshBtn = page.locator('xpath=/html/body/app-root/div[1]/kendo-splitter/kendo-splitter-pane/div/div[2]/div/app-dashboard/div/div[1]/div[2]/div/div[2]/kendo-tabstrip/div[2]/div/app-import-history/div/div/app-upload-history/div/button').first();
     
    //script to delete all the files from download directory
     const Downloadedfiles = fs.readdirSync(downloadDirectory);
@@ -204,17 +170,15 @@ test('Yearly Import Download and Upload', async ({page}) => {
         fs.unlinkSync(path.join(downloadDirectory, file));
     });
 
-    const importHistoryRows = page.locator('table').first().locator('tr').filter({ has: page.locator('td') });
+    //Code section to verify uploaded file in import history table
     let matchedRowFound = false;
-    const ImprtUpdtedCheck = 'Workflow Automation__05-18-26 05-40-21 10564'.toLowerCase();
-    // for (let i = 0; i < 10; i++) {
+    const ImportedFileCheck = ImportHistoryFileNameUpdated.toLowerCase();
         await expect(RefreshBtn).toBeVisible();
         await RefreshBtn.click();
         await expect(page.locator('.k-loading-image')).toBeVisible();
         await expect(page.locator('.k-loading-image')).toBeHidden();
         await page.waitForTimeout(5000);
 
-        await expect(importHistoryRows.first()).toBeVisible({ timeout: 30000 });
         const rowCount = await importHistoryRows.count();
         console.log(`Total import history rows: ${rowCount}`);
 
@@ -226,10 +190,9 @@ test('Yearly Import Download and Upload', async ({page}) => {
             console.log(`Checking import history row ${rowIndex}: ${rowText}`);
 
             
-            if (rowText.includes(normalizedUserId) && rowText.includes(ImprtUpdtedCheck)) {
+            if (rowText.includes(normalizedUserId) && rowText.includes(ImportedFileCheck)) {
                 console.log(`Matched import history row ${rowIndex}: ${await importHistoryRows.nth(rowIndex).innerText()}`);
-                matchedRowFound = true;
-                
+                matchedRowFound = true;                
                 break;
             }
             else {
@@ -240,57 +203,173 @@ test('Yearly Import Download and Upload', async ({page}) => {
                 await expect(page.locator('.k-loading-image')).toBeHidden();
                 }
             }
-        // if (!matchedRowFound ) {
-
-        // await expect(RefreshBtn).toBeVisible();
-        // await RefreshBtn.click();
-        // await expect(page.locator('.k-loading-image')).toBeVisible();
-        // await expect(page.locator('.k-loading-image')).toBeHidden();
-        // }
-        
-
-        // if (matchedRowFound) {
-        //     break;
-        // }
-
-        
-    
-
-    // expect(matchedRowFound).toBeTruthy();
-
 });
 
-// test('Import History Section', async ({page}) => {
-// const importHistoryTable = page.locator('table').first();
-// const importHistoryRows = importHistoryTable.locator('tr');
-// let matchedRowFound = false;
+test.skip('Download Entity Level Report', async ({page}) => {
+    
+    // let singleEntityLevelImport = true;
+    //CLear the download directory before starting the test
+    const files = fs.readdirSync(downloadDirectory);
+    files.forEach((file) => {
+        fs.unlinkSync(path.join(downloadDirectory, file));
+    });
 
-//     for (let i = 0; i < 10; i++) {
-//         await expect(RefreshBtn).toBeVisible();
-//         await RefreshBtn.click();
-//         await expect(page.locator('.k-loading-image')).toBeVisible();
-//         await page.waitForTimeout(20000);
+    await page.goto(ProjectUrl, { waitUntil: 'domcontentloaded' });
+    await page.waitForLoadState('networkidle');
 
-//         const rowCount = await importHistoryRows.count();
-//         for (let rowIndex = 1; rowIndex < rowCount; rowIndex++) {
-//             const rowText = (await importHistoryRows.nth(rowIndex).innerText()).trim().toLowerCase();
-//             const normalizedUserId = userID.toLowerCase();
-//             const normalizedFileName = ImportHistoryFileNameUpdated.toLowerCase();
-//             console.log(`Checking import history row ${rowIndex}: ${rowText}`);
+    const usernameInput = page.locator('input[type="email"], input[name="loginfmt"], input[data-report-event="Signin_Email_Phone_Skype"]').first();
+    const submitBtn = page.locator('input[type="submit"], input[data-report-event="Signin_Submit"]').first();
+
+    await expect(usernameInput).toBeVisible({ timeout: 15000 });
+    await usernameInput.fill(username);
+    await submitBtn.click();
+
+    const passwordInput = page.locator('input[type="password"], input[name="passwd"]').first();
+    await expect(passwordInput).toBeVisible({ timeout: 15000 });
+    await passwordInput.fill(password);
+    await submitBtn.click();
+
+    const bannerCloseBtn = page.locator('button[aria-label="Close"]').first();
+    await expect(bannerCloseBtn).toBeVisible();
+    // await expect(bannerCloseBtn).toBeVisible({ timeout: 15000 });
+    await bannerCloseBtn.click();
+
+    //Client Selection Starts
+    await expect(page).toHaveTitle(/.*Client*/);
+    const comboBox = page.locator('kendo-dropdownlist[role="combobox"], input[aria-haspopup="listbox"]').first();
+    await expect(comboBox).toBeVisible({ timeout: 15000 });
+    await comboBox.click();
+    await page.waitForTimeout(5000);
+
+    if (!await page.locator(`.k-list-item:has-text("${clientName}")`).count() > 0) {
+    await page.locator(`.k-list-item:has-text("${clientName}")`).click();
+     }
+     else {
+    await comboBox.click(); 
+    }
+    const continueBtn = page.locator('input[type="submit"], input[name="button"], button:has-text("Continue")').first();
+    await expect(continueBtn).toBeVisible({ timeout: 15000 });
+    await continueBtn.click();
+    //Client Selection Ends
+
+    //Dashboard loading wait
+    await expect(page).toHaveTitle(/.*Dashboard*/);
+    await expect(page.locator('.k-loading-image')).toBeVisible();
+    await expect(page.locator('.k-loading-image')).toBeHidden();
+    await page.waitForTimeout(5000);
+
+    //Entity selection from dashboard Grid section
+    await page.getByRole('link', { name: 'Entity Identification Filter' }).click();
+    await expect(page.getByRole('textbox', { name: 'Entity Identification Filter' })).toBeVisible();
+    await page.getByRole('textbox', { name: 'Entity Identification Filter' }).click();
+    await page.getByRole('textbox', { name: 'Entity Identification Filter' }).fill(entity);
+    await page.getByRole('button', { name: 'Filter', exact: true }).click();
+    await expect(page.locator('.k-loading-image')).toBeVisible();
+    await expect(page.locator('.k-loading-image')).toBeHidden();
+    
+    const ActionButton = page.locator('xpath=/html/body/app-root/div[1]/kendo-splitter/kendo-splitter-pane/div/div[2]/div/app-dashboard/div/div[2]/div/div/div[2]/kendo-tabstrip/div[2]/div/app-entity-grid/kendo-grid/div[1]/kendo-grid-list/div/div/table/tbody/tr/td[2]/kendo-toolbar/kendo-dropdownbutton/button/span[1]').first();
+    await expect(ActionButton).toBeVisible({ timeout: 15000 });
+    await ActionButton.click();
+    await expect(page.getByText('Download Reports')).toBeVisible();
+    await page.getByText('Download Reports').click();
+    await page.waitForTimeout(5000);
+    await expect(page.getByText(ReportName, { exact: true })).toBeVisible();
+    await page.getByRole('checkbox', { name: ReportName, exact: true }).check();
+    const DownloadBtn = page.locator('input[type="submit"], input[name="button"], button:has-text("Run Reports")').first();
+    await expect(DownloadBtn).toBeVisible({ timeout: 15000 });
+    const [download] = await Promise.all([
+        page.waitForEvent('download'),
+        DownloadBtn.click()
+    ]   );
+    const downloadedFileName = download.suggestedFilename();
+    const savedFilePath = path.join(downloadDirectory, downloadedFileName);
+    await download.saveAs(savedFilePath);
+    expect(fs.existsSync(savedFilePath)).toBeTruthy();
+    await console.log(`Downloaded file saved at: ${savedFilePath}`);    
+    await page.waitForTimeout(10000); // Wait for 10 seconds to ensure the selection is registered   
+});
 
 
-//             if (rowText.includes(normalizedUserId) && rowText.includes(normalizedFileName)) {
-//                 console.log(`Matched import history row ${rowIndex}: ${await importHistoryRows.nth(rowIndex).innerText()}`);
-//                 matchedRowFound = true;
-//                 break;
-//             }
-//         }
+test('On-Demand Report Download', async ({page}) => {
 
-//         if (matchedRowFound) {
-//             break;
-//         }
-//     }
+//Login and Client Selection steps starts
+const files = fs.readdirSync(downloadDirectory);
+    files.forEach((file) => {
+        fs.unlinkSync(path.join(downloadDirectory, file));
+    });
 
-//     expect(matchedRowFound).toBeTruthy();
+    await page.goto(ProjectUrl, { waitUntil: 'domcontentloaded' });
+    await page.waitForLoadState('networkidle');
 
-// });
+    const usernameInput = page.locator('input[type="email"], input[name="loginfmt"], input[data-report-event="Signin_Email_Phone_Skype"]').first();
+    const submitBtn = page.locator('input[type="submit"], input[data-report-event="Signin_Submit"]').first();
+
+    await expect(usernameInput).toBeVisible({ timeout: 15000 });
+    await usernameInput.fill(username);
+    await submitBtn.click();
+
+    const passwordInput = page.locator('input[type="password"], input[name="passwd"]').first();
+    await expect(passwordInput).toBeVisible({ timeout: 15000 });
+    await passwordInput.fill(password);
+    await submitBtn.click();
+
+    const bannerCloseBtn = page.locator('button[aria-label="Close"]').first();
+    await expect(bannerCloseBtn).toBeVisible();
+    // await expect(bannerCloseBtn).toBeVisible({ timeout: 15000 });
+    await bannerCloseBtn.click();
+
+    //Client Selection Starts
+    await expect(page).toHaveTitle(/.*Client*/);
+    const comboBox = page.locator('kendo-dropdownlist[role="combobox"], input[aria-haspopup="listbox"]').first();
+    await expect(comboBox).toBeVisible({ timeout: 15000 });
+    await comboBox.click();
+    await page.waitForTimeout(5000);
+
+    if (!await page.locator(`.k-list-item:has-text("${clientName}")`).count() > 0) {
+    await page.locator(`.k-list-item:has-text("${clientName}")`).click();
+     }
+     else {
+    await comboBox.click(); 
+    }
+    const continueBtn = page.locator('input[type="submit"], input[name="button"], button:has-text("Continue")').first();
+    await expect(continueBtn).toBeVisible({ timeout: 15000 });
+    await continueBtn.click();
+    //Client Selection Ends
+
+    //Dashboard loading wait
+    await expect(page).toHaveTitle(/.*Dashboard*/);
+    await expect(page.locator('.k-loading-image')).toBeVisible();
+    await expect(page.locator('.k-loading-image')).toBeHidden();
+    await page.waitForTimeout(5000);
+//Login and Client Selection steps ends
+
+//   await page.getByText('On-Demand Report').dblclick();
+const OnDemandReportBtn = page.getByText('On-Demand Report');
+await expect(OnDemandReportBtn).toBeVisible({ timeout: 15000 });
+await OnDemandReportBtn.click();
+
+const EntityDropDown = page.locator('xpath=/html/body/app-root/div[1]/kendo-splitter/kendo-splitter-pane/div/div[2]/div/app-dashboard/div/div[1]/div[2]/div/div[2]/kendo-tabstrip/div[2]/div/on-demand-report/div/div[1]/div[1]/div/div/kendo-dropdownlist/span/span').first();
+await expect(EntityDropDown).toBeVisible({ timeout: 15000 });
+await EntityDropDown.click();
+await page.waitForTimeout(5000);
+await page.getByRole('searchbox', { name: 'Filter' }).click();
+await page.waitForTimeout(5000);
+await page.getByRole('searchbox', { name: 'Filter' }).fill(Reportentity);
+await page.waitForTimeout(5000);
+// await expect(page.getByLabel('On-Demand Report').getByText('0218_Entity_Lower')).toBeVisible();
+// await page.getByRole('combobox').filter({ hasText: Reportentity }).getByLabel('Select').click();
+await page.getByLabel('Options list').getByText(Reportentity).click();
+await page.waitForTimeout(5000);
+
+  
+//   await page.getByRole('combobox', { name: '--Select State--' }).click();
+//   await page.getByRole('combobox', { name: '--Select State--' }).fill('NY');
+  
+  await page.getByRole('button', { name: 'Select Report' }).click();
+  await expect(page.getByText('State Fund Summary')).toBeVisible();
+  await expect(page.getByText('State Fund Summary')).toBeVisible();
+  await page.getByRole('checkbox', { name: 'State Fund Summary' }).check();
+  await page.getByTitle('Close').dblclick();
+  
+
+});
