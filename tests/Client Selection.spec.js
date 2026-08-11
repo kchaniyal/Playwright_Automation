@@ -51,7 +51,7 @@ test.skip('Login and select client', async ({page}) => {
     //Client Selection Ends
 });
 
-test.skip('Yearly Import Download and Upload', async ({page}) => {
+test('Yearly Import Download and Upload', async ({page}) => {
     
     // let singleEntityLevelImport = true;
     //CLear the download directory before starting the test
@@ -205,7 +205,7 @@ test.skip('Yearly Import Download and Upload', async ({page}) => {
             }
 });
 
-test.skip('Download Entity Level Report', async ({page}) => {
+test('Download Entity Level Report', async ({page}) => {
     
     // let singleEntityLevelImport = true;
     //CLear the download directory before starting the test
@@ -370,6 +370,5 @@ await page.waitForTimeout(5000);
   await expect(page.getByText('State Fund Summary')).toBeVisible();
   await page.getByRole('checkbox', { name: 'State Fund Summary' }).check();
   await page.getByTitle('Close').dblclick();
-  
 
 });
