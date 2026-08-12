@@ -1,1 +1,8 @@
+# Require a specific user to review ALL files in the repository
+*       @Kchaniyal
 
+# Require a specific user only for JavaScript files
+*.js    @Kchaniyal
+
+# Require a specific user only for files inside a specific directory
+/docs/  @Kchaniyal
