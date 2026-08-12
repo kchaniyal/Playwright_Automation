@@ -56,7 +56,7 @@ const clientName = 'QA Automation Master-2';
 // });
 
 test('Login and select QA Automation Global client', async () => {
-    const browser = await chromium.launch({ headless: false });
+    const browser = await chromium.launch({ headless: true });
     const context = await browser.newContext();
     const page = await context.newPage();
 
